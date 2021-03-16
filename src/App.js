@@ -12,6 +12,7 @@ function App() {
     isSigned: false,
     name: '',
     email: '',
+    password: '',
     photo: ''
   })
 
@@ -52,8 +53,23 @@ function App() {
     })
   }
 
-  const handleChange = (event)  =>{
-    console.log(event.target.name, event.target.value);
+  const handleBlur = (event)  =>{
+    let isFromValid = true;
+
+    if(event.target.name === 'email'){
+      isFromValid = /\S+@\S+\.\S+/.test(event.target.value);  
+    }
+    if(event.target.name === 'password'){
+      const isPasswordValid = event.target.value.length > 6;
+      const passwordHasNumber = /\d{1}/.test(event.target.value);
+      isFromValid = isPasswordValid && passwordHasNumber;
+    }
+    if(isFromValid){
+      const newUserInfo = {...user}
+      newUserInfo[event.target.name] = event.target.value;
+      
+      setUser(newUserInfo);
+    }
   }
 
   const handleSubmit = () => {
@@ -75,10 +91,15 @@ function App() {
         </div>
       }
      <h1>Our own Authentication</h1>
+     <p>Name: {user.name}</p>
+     <p>Email: {user.email}</p>
+     <p>Password: {user.password}</p>
      <form onSubmit={handleSubmit}>
-      <input type="text" name="email" onBlur={handleChange} placeholder="Enter Your place holder" required/>
+       <input type="text" name="name" onBlur={handleBlur} placeholder="Your name"/>
+       <br/>
+      <input type="text" name="email" onBlur={handleBlur} placeholder="Enter Your place holder" required/>
       <br/>
-      <input type="password" name="password" onChange={handleChange} id="" required/>
+      <input type="password" name="password" onBlur={handleBlur} id="" required/>
       <br/>
       <input type="submit" value="Submit"/>
      </form>
