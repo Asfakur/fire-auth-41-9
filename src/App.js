@@ -77,7 +77,6 @@ function App() {
   }
 
   const handleSubmit = (event) => {
-    // console.log(user.email, user.password)
     if (newUser && user.email && user.password) {
       firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
         .then((userCredential) => {
@@ -86,6 +85,7 @@ function App() {
           newUserInfo.error = '';
           newUserInfo.success = true;
           setUser(newUserInfo);
+          updateUserName(user.name);
           // var user = userCredential.user;
           // console.log(user);
           // ...
@@ -108,6 +108,7 @@ function App() {
           newUserInfo.error = '';
           newUserInfo.success = true;
           setUser(newUserInfo);
+          console.log('sign in user info', userCredential.user);
         })
         .catch((error) => {
           const newUserInfo = { ...user };
@@ -119,6 +120,18 @@ function App() {
     }
 
     event.preventDefault();
+  }
+
+  const updateUserName = name => {
+    const user = firebase.auth().currentUser;
+    
+    user.updateProfile({
+      displayName : name
+    }).then(function() {
+      console.log('user name update successfully');
+    }).catch(function(error) {
+      console.log(error);
+    });
   }
 
   return (
@@ -147,7 +160,7 @@ function App() {
         <br />
         <input type="password" name="password" onBlur={handleBlur} id="" required />
         <br />
-        <input type="submit" value="Submit" />
+        <input type="submit" value={newUser ? 'Sign Up' : 'Sign In'} />
       </form>
       <p style={{ color: 'red' }}>{user.error}</p>
       { user.success && <p style={{ color: 'green' }}>User { newUser ? 'created' : 'Logged In'} successfully</p>}
